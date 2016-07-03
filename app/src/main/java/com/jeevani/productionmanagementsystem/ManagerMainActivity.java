@@ -1,14 +1,11 @@
 package com.jeevani.productionmanagementsystem;
 
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -25,7 +22,7 @@ import java.util.List;
  */
 public class ManagerMainActivity extends AppCompatActivity {
 
-    private DrawerLayout mDrawerLayout;
+    //private DrawerLayout mDrawerLayout;
     ArcMenu arcMenuAndroid;
 
     @Override
@@ -48,16 +45,16 @@ public class ManagerMainActivity extends AppCompatActivity {
             }
         });
 
-        final ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-        ab.setDisplayHomeAsUpEnabled(true);
+        //final ActionBar ab = getSupportActionBar();
+        //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        //ab.setDisplayHomeAsUpEnabled(true);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        /*NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (navigationView != null) {
             setupDrawerContent(navigationView);
-        }
+        }*/
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         if (viewPager != null) {
@@ -155,7 +152,7 @@ public class ManagerMainActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
     }
 
-    private void setupDrawerContent(NavigationView navigationView) {
+    /*private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -165,7 +162,7 @@ public class ManagerMainActivity extends AppCompatActivity {
                         return true;
                     }
                 });
-    }
+    }*/
 
     static class Adapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragments = new ArrayList<>();
