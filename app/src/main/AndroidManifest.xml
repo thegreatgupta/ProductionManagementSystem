@@ -64,7 +64,8 @@
             android:theme="@style/Theme.DesignDemo"></activity>
         <activity android:name=".RegisterActivity"></activity>
         <activity android:name=".ForgotPasswordActivity"></activity>
-
+        <activity android:name=".ManagerMainActivity"></activity>
+        <activity android:name=".DetailActivity"></activity>
     </application>
 
 </manifest>
