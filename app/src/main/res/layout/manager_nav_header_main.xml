@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="198dp"
+    android:background="@drawable/images3"
+    android:gravity="bottom"
+    android:orientation="vertical">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:id="@+id/profile_image"
+        android:src="@drawable/default_avatar"
+        app:border_color="#ff000000"
+        android:layout_marginLeft="24dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="24dp"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        android:text="JEEVANI"
+        android:textStyle="bold"
+        android:gravity="left"
+        android:textSize="14sp"
+        android:textColor="#fff"
+        android:id="@+id/username"
+        android:layout_above="@+id/email"
+        android:layout_alignLeft="@+id/profile_image"
+        android:layout_alignStart="@+id/profile_image"
+        />
+
+    <TextView
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="jeevanib5.com"
+        android:gravity="left"
+        android:textSize="14sp"
+        android:textColor="#fff"
+        android:layout_marginBottom="8dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/profile_image"
+        android:layout_alignStart="@+id/profile_image"/>
+
+</RelativeLayout>

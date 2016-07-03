@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.jeevani.productionmanagementsystem.LabourMainActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:layout_scrollFlags="scroll|enterAlways|snap" />
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:layout_below="@+id/toolbar">
+
+        <com.sa90.materialarcmenu.ArcMenu
+            android:id="@+id/arcmenu_android_example_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            app:menu_color="#40afff"
+            app:menu_open="arc_left"
+            app:menu_scr="@android:drawable/ic_dialog_email"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true" >
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_arc_menu_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_dialog_info"
+                app:backgroundTint="#40afff" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_arc_menu_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_dialog_alert"
+                app:backgroundTint="#40afff" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_arc_menu_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_dialog_email"
+                app:backgroundTint="#40afff" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_arc_menu_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:src="@android:drawable/ic_dialog_map"
+                app:backgroundTint="#40afff" />
+
+        </com.sa90.materialarcmenu.ArcMenu>
+    </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>
