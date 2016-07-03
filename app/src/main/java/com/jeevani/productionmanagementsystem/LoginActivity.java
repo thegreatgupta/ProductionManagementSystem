@@ -45,5 +45,13 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(forgotIntent);
             }
         });
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(LoginActivity.this,LabourMainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

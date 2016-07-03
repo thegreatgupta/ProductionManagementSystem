@@ -64,7 +64,12 @@
             android:theme="@style/Theme.DesignDemo"></activity>
         <activity android:name=".RegisterActivity"></activity>
         <activity android:name=".ForgotPasswordActivity"></activity>
-
+        <activity android:name=".LabourMainActivity"></activity>
+        <activity android:name=".DetailActivity"
+            android:parentActivityName=".LabourMainActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".LabourMainActivity"/>
+        </activity>
     </application>
 
 </manifest>
