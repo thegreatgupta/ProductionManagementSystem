@@ -4,7 +4,7 @@
     <string name="cheese_ipsum">Jarlsberg lancashire edam. Dolcelatte hard cheese brie st. agur blue
         cheese caerphilly bavarian bergkase cheese and biscuits mascarpone.</string>
     <string name="checkin">Checkin</string>
-    <string name="menu_night_mode">Setting</string>
+    <string name="logout">Logout</string>
 
     <!--<string name="menu_night_mode">Night mode</string>
     <string name="menu_night_mode_system">Follow system</string>
