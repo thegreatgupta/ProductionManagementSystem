@@ -3,6 +3,7 @@ package com.jeevani.productionmanagementsystem;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,10 +30,13 @@ public class RegisterActivity extends AppCompatActivity {
         password = (EditText) findViewById(R.id.password);
         confirmpassword = (EditText) findViewById(R.id.confirmpassword);
 
-       signupButton = (Button) findViewById(R.id.signupButton);
+        signupButton = (Button) findViewById(R.id.signupButton);
 
         loginLink = (TextView) findViewById(R.id.loginLink);
+        loginLink.setText(Html.fromHtml("Already Registered? <i>SIGN IN</i>"));
+
         forgotLink = (TextView) findViewById(R.id.forgotLink);
+        forgotLink.setText(Html.fromHtml("Forgot Password? <i>Click Here</i>"));
 
         loginLink.setOnClickListener(new View.OnClickListener() {
             @Override

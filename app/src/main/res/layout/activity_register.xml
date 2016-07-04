@@ -144,22 +144,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Already Registered? SIGN IN"
             android:id="@+id/loginLink"
             android:layout_gravity="center_horizontal"
             android:textColor="#fff"
             android:layout_weight="0.05"
             android:textSize="20dp"/>
-
+        <!--android:text="Already Registered? SIGN IN"-->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Forget Password???"
             android:id="@+id/forgotLink"
             android:layout_gravity="center_horizontal"
             android:layout_weight="0.1"
             android:textSize="20dp"
             android:textColor="#fff"/>
+        <!--android:text="Forgot Password? Click Here"-->
 
     </LinearLayout>
 
