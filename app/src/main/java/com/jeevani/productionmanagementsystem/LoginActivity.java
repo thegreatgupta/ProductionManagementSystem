@@ -277,6 +277,8 @@ public class LoginActivity extends AppCompatActivity {
                         user.setPhone(object.getString("phone"));
                         user.setType(object.getString("type"));
 
+                        dbHandler.addNewUser(user);
+
                         // Create a Bundle of User detail to pass between the pages.
                         Bundle userBundle = new Bundle();
 
