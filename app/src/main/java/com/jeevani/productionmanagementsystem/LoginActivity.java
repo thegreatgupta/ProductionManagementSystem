@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.jeevani.productionmanagementsystem.bean.User;
 import com.jeevani.productionmanagementsystem.constant.Constant;
+import com.jeevani.productionmanagementsystem.database.DBHandler;
 import com.jeevani.productionmanagementsystem.util.NetConnectionDetector;
 import com.jeevani.productionmanagementsystem.util.SystemAppPreferences;
 
@@ -53,19 +54,67 @@ public class LoginActivity extends AppCompatActivity {
 
     int status;
     User user = new User();
-    String TAG = "Login_Activity:";
+    String TAG = "LoginActivity:";
 
     String URL = Constant.IP_ADDRESS + "login";
     String URL1 = Constant.IP_ADDRESS + "login";
 
-    private SystemAppPreferences mSysPrefs;
+    //private SystemAppPreferences mSysPrefs;
+    DBHandler dbHandler = new DBHandler(this, null, null, 1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (dbHandler.isUserLoggedIn()) {
+
+            User user = dbHandler.getUserDetail();
+
+            // Create a Bundle of User detail to pass between the pages.
+            Bundle userBundle = new Bundle();
+
+            // Add dtails to the Bundle
+            userBundle.putString("userId", user.getUserId());
+            userBundle.putString("firstName", user.getFirstName());
+            userBundle.putString("lastName", user.getLastName());
+            userBundle.putString("email", user.getEmail());
+            userBundle.putString("phone", user.getPhone());
+            userBundle.putString("type", user.getType());
+
+
+
+            if (user.getType().equals("LABOUR")) {
+
+                // Create intent for movinf to new Activity
+                Intent loginIntent = new Intent(getApplicationContext(), LabourMainActivity.class);
+                // Add Bundle to intent
+                loginIntent.putExtras(userBundle);
+                // Start the next Activity
+                startActivity(loginIntent);
+                // Finish the current Activity
+                finish();
+
+            }
+            else {
+
+                // Create intent for movinf to new Activity
+                Intent loginIntent = new Intent(getApplicationContext(), ManagerMainActivity.class);
+                // Add Bundle to intent
+                loginIntent.putExtras(userBundle);
+                // Start the next Activity
+                startActivity(loginIntent);
+                // Finish the current Activity
+                finish();
+
+
+            }
+        }
+
+        /*
         mSysPrefs = SystemAppPreferences.getInstance(getApplicationContext());
-        if(mSysPrefs.getUserId() != null) {
+        if(mSysPrefs.getUserId() != null && !mSysPrefs.getUserId().equals("")) {
+
+            Log.d(TAG, "UserId:" + mSysPrefs.getUserId() + " TYPE:" + mSysPrefs.getType());
 
             if(mSysPrefs.getType().equals("LABOUR")) {
                 // Create intent for moving to new Activity and Start the next Activity
@@ -80,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
 
-        }
+        }*/
 
         setContentView(R.layout.activity_login);
 
@@ -232,15 +281,40 @@ public class LoginActivity extends AppCompatActivity {
                         Bundle userBundle = new Bundle();
 
                         // Add dtails to the Bundle
-                        /*
                         userBundle.putString("userId", user.getUserId());
                         userBundle.putString("firstName", user.getFirstName());
                         userBundle.putString("lastName", user.getLastName());
                         userBundle.putString("email", user.getEmail());
                         userBundle.putString("phone", user.getPhone());
                         userBundle.putString("type", user.getType());
-                        */
 
+                        if (user.getType().equals("LABOUR")) {
+
+                            // Create intent for movinf to new Activity
+                            Intent loginIntent = new Intent(getApplicationContext(), LabourMainActivity.class);
+                            // Add Bundle to intent
+                            loginIntent.putExtras(userBundle);
+                            // Start the next Activity
+                            startActivity(loginIntent);
+                            // Finish the current Activity
+                            finish();
+
+                        }
+                        else {
+
+                            // Create intent for movinf to new Activity
+                            Intent loginIntent = new Intent(getApplicationContext(), ManagerMainActivity.class);
+                            // Add Bundle to intent
+                            loginIntent.putExtras(userBundle);
+                            // Start the next Activity
+                            startActivity(loginIntent);
+                            // Finish the current Activity
+                            finish();
+
+
+                        }
+
+                        /*
                         // Update the user data to the Shared Preferences
                         mSysPrefs.setUserId(user.getUserId());
                         mSysPrefs.setFirstName(user.getFirstName());
@@ -263,6 +337,7 @@ public class LoginActivity extends AppCompatActivity {
                             // Finish the current Activity
                             finish();
                         }
+                        */
 
                     }
                     else {

@@ -14,6 +14,7 @@ public class User {
     private String joinDate;
     private String device;
     private String type = "LABOUR";
+    private String remember = "YES";
 
     public User() {
     }
@@ -111,5 +112,13 @@ public class User {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getRemember() {
+        return remember;
+    }
+
+    public void setRemember(String remember) {
+        this.remember = remember;
     }
 }
