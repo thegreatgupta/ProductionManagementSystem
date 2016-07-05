@@ -2,6 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jeevani.productionmanagementsystem" >
 
+    <uses-sdk
+        android:maxSdkVersion="23"
+        android:minSdkVersion="15" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -61,14 +73,50 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_welcome"
-            android:theme="@style/Theme.DesignDemo"></activity>
-        <activity android:name=".RegisterActivity"></activity>
-        <activity android:name=".ForgotPasswordActivity"></activity>
-        <activity android:name=".LabourMainActivity"></activity>
+            android:theme="@style/Theme.DesignDemo">
+            <intent-filter>
+                <action android:name="com.jeevani.productionmanagementsystem.LoginActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".RegisterActivity">
+            <intent-filter>
+                <action android:name="com.jeevani.productionmanagementsystem.RegisterActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ForgotPasswordActivity">
+            <intent-filter>
+                <action android:name="com.jeevani.productionmanagementsystem.ForgotPasswordActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".LabourMainActivity">
+            <intent-filter>
+                <action android:name="com.jeevani.productionmanagementsystem.LabourMainActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".DetailActivity"
             android:parentActivityName=".LabourMainActivity">
             <meta-data android:name="android.support.PARENT_ACTIVITY"
                 android:value=".LabourMainActivity"/>
+            <intent-filter>
+                <action android:name="com.jeevani.productionmanagementsystem.DetailActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ManagerMainActivity">
+            <intent-filter>
+                <action android:name="com.jeevani.productionmanagementsystem.ManagerMainActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
     </application>
 

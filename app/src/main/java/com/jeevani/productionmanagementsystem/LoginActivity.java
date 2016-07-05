@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.jeevani.productionmanagementsystem.bean.User;
 import com.jeevani.productionmanagementsystem.constant.Constant;
+import com.jeevani.productionmanagementsystem.database.DBHandler;
 import com.jeevani.productionmanagementsystem.util.NetConnectionDetector;
 import com.jeevani.productionmanagementsystem.util.SystemAppPreferences;
 
@@ -34,9 +35,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 /**
  * Created by Chandra Prakash Gupta on 6/29/2016.
@@ -47,18 +50,87 @@ public class LoginActivity extends AppCompatActivity {
     Button loginButton;
     TextView signupLink,forgotLink;
 
-    boolean status = false;
+    String userEmail, userPassword;
+
+    int status;
     User user = new User();
-    String TAG = "Login_Activity:";
+    String TAG = "LoginActivity:";
 
     String URL = Constant.IP_ADDRESS + "login";
     String URL1 = Constant.IP_ADDRESS + "login";
 
-    private SystemAppPreferences mSysPrefs;
+    //private SystemAppPreferences mSysPrefs;
+    DBHandler dbHandler = new DBHandler(this, null, null, 1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (dbHandler.isUserLoggedIn()) {
+
+            User user = dbHandler.getUserDetail();
+
+            // Create a Bundle of User detail to pass between the pages.
+            Bundle userBundle = new Bundle();
+
+            // Add dtails to the Bundle
+            userBundle.putString("userId", user.getUserId());
+            userBundle.putString("firstName", user.getFirstName());
+            userBundle.putString("lastName", user.getLastName());
+            userBundle.putString("email", user.getEmail());
+            userBundle.putString("phone", user.getPhone());
+            userBundle.putString("type", user.getType());
+
+
+
+            if (user.getType().equals("LABOUR")) {
+
+                // Create intent for movinf to new Activity
+                Intent loginIntent = new Intent(getApplicationContext(), LabourMainActivity.class);
+                // Add Bundle to intent
+                loginIntent.putExtras(userBundle);
+                // Start the next Activity
+                startActivity(loginIntent);
+                // Finish the current Activity
+                finish();
+
+            }
+            else {
+
+                // Create intent for movinf to new Activity
+                Intent loginIntent = new Intent(getApplicationContext(), ManagerMainActivity.class);
+                // Add Bundle to intent
+                loginIntent.putExtras(userBundle);
+                // Start the next Activity
+                startActivity(loginIntent);
+                // Finish the current Activity
+                finish();
+
+
+            }
+        }
+
+        /*
+        mSysPrefs = SystemAppPreferences.getInstance(getApplicationContext());
+        if(mSysPrefs.getUserId() != null && !mSysPrefs.getUserId().equals("")) {
+
+            Log.d(TAG, "UserId:" + mSysPrefs.getUserId() + " TYPE:" + mSysPrefs.getType());
+
+            if(mSysPrefs.getType().equals("LABOUR")) {
+                // Create intent for moving to new Activity and Start the next Activity
+                startActivity(new Intent(this, LabourMainActivity.class));
+                // Finish the current Activity
+                finish();
+            }
+            else {
+                // Create intent for moving to new Activity and Start the next Activity
+                startActivity(new Intent(this, ManagerMainActivity.class));
+                // Finish the current Activity
+                finish();
+            }
+
+        }*/
+
         setContentView(R.layout.activity_login);
 
         email=(EditText)findViewById(R.id.email);
@@ -74,6 +146,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent registerIntent=new Intent(LoginActivity.this,RegisterActivity.class);
                 startActivity(registerIntent);
+                finish();
             }
         });
 
@@ -82,14 +155,28 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent forgotIntent=new Intent(LoginActivity.this,ForgotPasswordActivity.class);
                 startActivity(forgotIntent);
+                finish();
             }
         });
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(LoginActivity.this,LabourMainActivity.class);
-                startActivity(intent);
+
+                try {
+
+                    userEmail = email.getText().toString();
+                    userPassword = password.getText().toString();
+
+                    URL = URL1 + "?email="+ URLEncoder.encode(userEmail, "utf-8") +"&password="+URLEncoder.encode(userPassword, "utf-8");
+
+                    // Request server for login Validation and get the user details
+                    new LoginDown().execute();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
         });
     }
@@ -154,7 +241,10 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            super.onPreExecute();
+            super.onPreExecute();// Initialize the Dialogue BOX
+            dialog = new ProgressDialog(LoginActivity.this);
+            dialog.setMessage("Loggin, Please Wait...");
+            dialog.setCancelable(false);
             dialog.show();
         }
 
@@ -175,51 +265,81 @@ public class LoginActivity extends AppCompatActivity {
 
                     JSONObject object = array.getJSONObject(i);
 
-                    status = object.getBoolean("status");
+                    status = object.getInt("status");
 
-                    if (status) {
+                    if (status == 200) {
 
+                        // Read add the data from the JSON object
+                        user.setUserId("" + object.getInt("userId"));
+                        user.setFirstName(object.getString("firstName"));
+                        user.setLastName(object.getString("lastName"));
                         user.setEmail(object.getString("email"));
-                        user.setPassword(object.getString("password"));
+                        user.setPhone(object.getString("phone"));
+                        user.setType(object.getString("type"));
 
-                        // Create DBHandle object to perform CRUD operation
-                        DBHandler db = new DBHandler(Login.this, null, null, 1);
-                        // Add the user details to the database for fast and easy login in future
-                        db.addNewUser(user);
+                        dbHandler.addNewUser(user);
 
                         // Create a Bundle of User detail to pass between the pages.
                         Bundle userBundle = new Bundle();
 
                         // Add dtails to the Bundle
+                        userBundle.putString("userId", user.getUserId());
+                        userBundle.putString("firstName", user.getFirstName());
+                        userBundle.putString("lastName", user.getLastName());
                         userBundle.putString("email", user.getEmail());
+                        userBundle.putString("phone", user.getPhone());
+                        userBundle.putString("type", user.getType());
 
-                        dialog.hide();
-
-
-                        if (user.getType().equals("USER")) {
+                        if (user.getType().equals("LABOUR")) {
 
                             // Create intent for movinf to new Activity
-                            Intent loginIntent = new Intent(getApplicationContext(), UserHome.class);
+                            Intent loginIntent = new Intent(getApplicationContext(), LabourMainActivity.class);
                             // Add Bundle to intent
                             loginIntent.putExtras(userBundle);
                             // Start the next Activity
                             startActivity(loginIntent);
                             // Finish the current Activity
-                            //finish();
+                            finish();
 
                         }
                         else {
 
                             // Create intent for movinf to new Activity
-                            Intent loginIntent = new Intent(getApplicationContext(), AdminHome.class);
+                            Intent loginIntent = new Intent(getApplicationContext(), ManagerMainActivity.class);
                             // Add Bundle to intent
                             loginIntent.putExtras(userBundle);
                             // Start the next Activity
                             startActivity(loginIntent);
                             // Finish the current Activity
-                            //finish();
+                            finish();
+
 
                         }
+
+                        /*
+                        // Update the user data to the Shared Preferences
+                        mSysPrefs.setUserId(user.getUserId());
+                        mSysPrefs.setFirstName(user.getFirstName());
+                        mSysPrefs.setLastName(user.getLastName());
+                        mSysPrefs.setEmail(user.getEmail());
+                        mSysPrefs.setPhone(user.getPhone());
+                        mSysPrefs.setType(user.getType());
+
+                        dialog.hide();
+
+                        if(mSysPrefs.getType().equals("LABOUR")) {
+                            // Create intent for moving to new Activity and Start the next Activity
+                            startActivity(new Intent(LoginActivity.this, LabourMainActivity.class));
+                            // Finish the current Activity
+                            finish();
+                        }
+                        else {
+                            // Create intent for moving to new Activity and Start the next Activity
+                            startActivity(new Intent(LoginActivity.this, ManagerMainActivity.class));
+                            // Finish the current Activity
+                            finish();
+                        }
+                        */
 
                     }
                     else {
@@ -229,6 +349,7 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "INVALID USERNAME OR PASSWORD", Toast.LENGTH_SHORT).show();
                         password.setText("");
                         return;
+
                     }
 
                 }
