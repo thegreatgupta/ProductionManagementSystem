@@ -42,7 +42,7 @@
         android:layout_below="@+id/toolbar">
 
         <com.sa90.materialarcmenu.ArcMenu
-            android:id="@+id/arcmenu_android_example_layout"
+            android:id="@+id/labour_arcmenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
@@ -53,28 +53,28 @@
             android:layout_alignParentRight="true" >
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab_arc_menu_1"
+                android:id="@+id/labour_arc_menu_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@android:drawable/ic_dialog_info"
                 app:backgroundTint="#40afff" />
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab_arc_menu_2"
+                android:id="@+id/labour_arc_menu_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@android:drawable/ic_dialog_alert"
                 app:backgroundTint="#40afff" />
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab_arc_menu_3"
+                android:id="@+id/labour_arc_menu_3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@android:drawable/ic_dialog_email"
                 app:backgroundTint="#40afff" />
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab_arc_menu_4"
+                android:id="@+id/labour_arc_menu_4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"

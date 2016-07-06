@@ -1,6 +1,7 @@
 package com.jeevani.productionmanagementsystem;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.sa90.materialarcmenu.ArcMenu;
 import com.sa90.materialarcmenu.StateChangeListener;
@@ -30,7 +33,7 @@ public class LabourMainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        arcMenuAndroid = (ArcMenu) findViewById(R.id.arcmenu_android_example_layout);
+        arcMenuAndroid = (ArcMenu) findViewById(R.id.labour_arcmenu);
         arcMenuAndroid.setStateChangeListener(new StateChangeListener() {
             @Override
             public void onMenuOpened() {
@@ -58,15 +61,41 @@ public class LabourMainActivity extends AppCompatActivity {
             setupViewPager(viewPager);
         }
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        //Floating Arc Menu Child Items
+        FloatingActionButton fab1 = (FloatingActionButton) findViewById(R.id.labour_arc_menu_1);
+        fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Toast.makeText(getApplicationContext(),"Fab-1",Toast.LENGTH_SHORT).show();
             }
-        });*/
+        });
 
+        FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.labour_arc_menu_2);
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),"Fab-2",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        FloatingActionButton fab3 = (FloatingActionButton) findViewById(R.id.labour_arc_menu_3);
+        fab3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),"Fab-3",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        FloatingActionButton fab4 = (FloatingActionButton) findViewById(R.id.labour_arc_menu_4);
+        fab4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),"Fab-4",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        //Tabs
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
     }
