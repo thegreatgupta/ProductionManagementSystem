@@ -27,8 +27,7 @@ public class ItemView extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        RecyclerView rv = (RecyclerView) inflater.inflate(
-                R.layout.item_view, container, false);
+        RecyclerView rv = (RecyclerView) inflater.inflate(R.layout.item_view, container, false);
         setupRecyclerView(rv);
         return rv;
     }
@@ -87,8 +86,7 @@ public class ItemView extends Fragment {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.list_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
             view.setBackgroundResource(mBackground);
             return new ViewHolder(view);
         }
