@@ -1,6 +1,7 @@
 package com.jeevani.productionmanagementsystem;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -17,22 +18,19 @@ import android.widget.Toast;
 import com.jeevani.productionmanagementsystem.bean.User;
 import com.jeevani.productionmanagementsystem.constant.Constant;
 import com.jeevani.productionmanagementsystem.database.DBHandler;
+import com.jeevani.productionmanagementsystem.util.NetConnectionDetector;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.DataOutputStream;
 import java.io.InputStreamReader;
-import java.net.URLEncoder;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 
 /**
  * Created by Jeevani on 6/29/2016.
@@ -46,16 +44,26 @@ public class RegisterActivity extends AppCompatActivity {
     String userFirstName, userLastName, userEmail, userPhone;
     String userDevice, userPassword, userConfirmPassword;
 
+    final int SUCCESS = 1;
+    final int EXCEPTION = 2;
+    final int EMPTY = 3;
+    final int CONNECTION_ERROR = 4;
+    final int NO_CONNECTIVITY = 5;
+    final int CONNECTION_TIMEOUT_ERROR = 6;
+
     int status;
     User user = new User();
     String TAG = "RegisterActivity:";
 
-    String URL = Constant.IP_ADDRESS + "register";
-    String URL1 = Constant.IP_ADDRESS + "register";
+    final String TYPE = "register";
+
+    Context mContext;
+
+    String param;
+    String decodedString, result;
 
     //private SystemAppPreferences mSysPrefs;
     DBHandler dbHandler = new DBHandler(this, null, null, 1);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,14 +116,13 @@ public class RegisterActivity extends AppCompatActivity {
 
                     // Validation
 
-                    URL = URL1 +
-                            "?firstName=" + URLEncoder.encode(userFirstName, "utf-8") +
-                            "&lastName=asd4" + URLEncoder.encode(userLastName, "utf-8") +
-                            "&email=asd4@asd.com" +URLEncoder.encode(userEmail, "utf-8") +
-                            "&password=12345678" +URLEncoder.encode(userPassword, "utf-8") +
-                            "&phone=8527419630" +URLEncoder.encode(userPhone, "utf-8") +
-                            "&joinDate=65165184561" +URLEncoder.encode("06-07-2016", "utf-8") +
-                            "&device=Postman 2" +URLEncoder.encode(userDevice, "utf-8");
+                    param = "firstName=" + userFirstName +
+                            "&lastName=" + userLastName +
+                            "&email=" + userEmail +
+                            "&password=" + userPassword +
+                            "&phone=" + userPhone +
+                            "&joinDate=07-07-2016" +
+                            "&device=" + userDevice;
 
                     // Request server for Registration Validation and get the user details
                     new RegisterDown().execute();
@@ -138,60 +145,146 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     // Server Connection and Request/Response transaction block
-    public String registerValidationWS(String url) {
+    public int registerValidationWS(String urlParam, Context context) {
 
-        // It is use to create the output string for JSON parsing
-        StringBuilder stringBuilder = new StringBuilder();
-        // Create the connection
-        HttpClient client = new DefaultHttpClient();
-        // Defines the request and response method ex. POST or GET and sets the URL
-        HttpPost post = new HttpPost(url);
+        // Assign the context to the global context object
+        mContext = context;
 
         try {
 
-            // Iy is used to get the response from the server
-            HttpResponse response = client.execute(post);
-            // Get the statusCode. For successful executeion the statusCode is 200 and other are 400, 404, 500 and etc
-            final int statusCode = response.getStatusLine().getStatusCode();
+            // Check for the network connectivity.
+            NetConnectionDetector connection = NetConnectionDetector.getInstance(mContext);
+            if (!connection.isConntectingToInternet())
+                return NO_CONNECTIVITY;
 
-            if (statusCode == 200) {
+            // Define the parameters to the String object.
+            String urlParamters = urlParam;
+            // Define the url to the URL object to open the connection.
+            URL url = new URL(Constant.IP_ADDRESS + TYPE);
+            // Open the connection and define the connection property.
+            HttpURLConnection mHttpPost = (HttpURLConnection) url.openConnection();
+            mHttpPost.setDoInput(true);
+            mHttpPost.setDoOutput(true);
+            mHttpPost.setReadTimeout(10000);
+            mHttpPost.setRequestMethod("POST");
+            mHttpPost.setRequestProperty("Content-Type", "application/x-www-form-urlencoded ");
 
-                // Parse the entity from the reponse
-                HttpEntity entity = response.getEntity();
-                // Parse the entity into the stream
-                InputStream inputStream = entity.getContent();
+            DataOutputStream out = new DataOutputStream(mHttpPost.getOutputStream());
+            // Write the parameters to the requested url.
+            out.writeBytes(urlParamters);
+            // Flush the request
+            out.flush();
+            // Close the connection
+            out.close();
 
-                // It will store the stream into buffer for simple execute or extraction
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            // Read the response data
+            StringBuilder sb = new StringBuilder();
+            // Convert the data to BufferedString for decoding and parsing
+            BufferedReader in = new BufferedReader(new InputStreamReader(mHttpPost.getInputStream()));
+            // Decode the data line by line and save it to StringBuilder
+            while ((decodedString = in.readLine()) != null)
+                sb.append(decodedString);
 
-                String output;
+            in.close();
 
-                // It will add line by line to the output string
-                while ((output = reader.readLine()) != null) {
-                    stringBuilder.append(output);
+            // Parse the incoming response
+            Log.i("Async Call Response", sb.toString());
+            result = sb.toString();
+
+            return SUCCESS;
+
+        } catch (SocketTimeoutException e) {
+            return CONNECTION_ERROR;
+        } catch (ConnectTimeoutException e) {
+            return CONNECTION_TIMEOUT_ERROR;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return EXCEPTION;
+        }
+
+    }
+
+    public void registerParsing(String result) {
+
+        try {
+
+            JSONArray array = new JSONArray(result);
+
+            for (int i = 0; i < array.length(); i++) {
+
+                JSONObject object = array.getJSONObject(i);
+
+                status = object.getInt("status");
+
+                if (status == 200) {
+
+                    // Read add the data from the JSON object
+                    user.setUserId("" + object.getInt("userId"));
+                    user.setFirstName(object.getString("firstName"));
+                    user.setLastName(object.getString("lastName"));
+                    user.setEmail(object.getString("email"));
+                    user.setPhone(object.getString("phone"));
+                    user.setType(object.getString("type"));
+
+                    dbHandler.addNewUser(user);
+
+                    // Create a Bundle of User detail to pass between the pages.
+                    Bundle userBundle = new Bundle();
+
+                    // Add dtails to the Bundle
+                    userBundle.putString("userId", user.getUserId());
+                    userBundle.putString("firstName", user.getFirstName());
+                    userBundle.putString("lastName", user.getLastName());
+                    userBundle.putString("email", user.getEmail());
+                    userBundle.putString("phone", user.getPhone());
+                    userBundle.putString("type", user.getType());
+
+                    if (user.getType().equals("LABOUR")) {
+
+                        // Create intent for movinf to new Activity
+                        Intent loginIntent = new Intent(getApplicationContext(), LabourMainActivity.class);
+                        // Add Bundle to intent
+                        loginIntent.putExtras(userBundle);
+                        // Start the next Activity
+                        startActivity(loginIntent);
+                        // Finish the current Activity
+                        finish();
+
+                    }
+                    else {
+
+                        // Create intent for movinf to new Activity
+                        Intent loginIntent = new Intent(getApplicationContext(), ManagerMainActivity.class);
+                        // Add Bundle to intent
+                        loginIntent.putExtras(userBundle);
+                        // Start the next Activity
+                        startActivity(loginIntent);
+                        // Finish the current Activity
+                        finish();
+
+
+                    }
+
+                }
+                else {
+
+                    Toast.makeText(RegisterActivity.this, "USER ALREADY EXIST, PLEASE USE OTHER EMAIL", Toast.LENGTH_SHORT).show();
+                    password.setText("");
+                    confirmpassword.setText("");
+                    email.setText("");
+                    return;
+
                 }
 
-                Log.d(TAG, "Success to Download File");
-
-            }
-            else {
-
-                Toast.makeText(RegisterActivity.this, "Failed to Connect to Server", Toast.LENGTH_SHORT).show();
-
-                Log.d(TAG, "Failed to Download File from URL-" + url);
             }
 
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        // Convert the output data into string and return to the onPostExecution method
-        return stringBuilder.toString();
-
     }
-    class RegisterDown extends AsyncTask<String, String, String> {
+
+    class RegisterDown extends AsyncTask<String, String, Integer> {
 
         ProgressDialog dialog;
 
@@ -205,116 +298,44 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(String... params) {
-            return registerValidationWS(URL);
+        protected Integer doInBackground(String... params) {
+
+            return registerValidationWS(param, RegisterActivity.this);
+
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
+        protected void onPostExecute(Integer code) {
+            super.onPostExecute(code);
 
-            try {
+            dialog.hide();
 
-                JSONArray array = new JSONArray(result);
-
-                for (int i = 0; i < array.length(); i++) {
-
-                    JSONObject object = array.getJSONObject(i);
-
-                    status = object.getInt("status");
-
-                    if (status == 200) {
-
-                        // Read add the data from the JSON object
-                        user.setUserId("" + object.getInt("userId"));
-                        user.setFirstName(object.getString("firstName"));
-                        user.setLastName(object.getString("lastName"));
-                        user.setEmail(object.getString("email"));
-                        user.setPhone(object.getString("phone"));
-                        user.setType(object.getString("type"));
-
-                        dbHandler.addNewUser(user);
-
-                        // Create a Bundle of User detail to pass between the pages.
-                        Bundle userBundle = new Bundle();
-
-                        // Add dtails to the Bundle
-                        userBundle.putString("userId", user.getUserId());
-                        userBundle.putString("firstName", user.getFirstName());
-                        userBundle.putString("lastName", user.getLastName());
-                        userBundle.putString("email", user.getEmail());
-                        userBundle.putString("phone", user.getPhone());
-                        userBundle.putString("type", user.getType());
-
-                        if (user.getType().equals("LABOUR")) {
-
-                            // Create intent for movinf to new Activity
-                            Intent loginIntent = new Intent(getApplicationContext(), LabourMainActivity.class);
-                            // Add Bundle to intent
-                            loginIntent.putExtras(userBundle);
-                            // Start the next Activity
-                            startActivity(loginIntent);
-                            // Finish the current Activity
-                            finish();
-
-                        }
-                        else {
-
-                            // Create intent for movinf to new Activity
-                            Intent loginIntent = new Intent(getApplicationContext(), ManagerMainActivity.class);
-                            // Add Bundle to intent
-                            loginIntent.putExtras(userBundle);
-                            // Start the next Activity
-                            startActivity(loginIntent);
-                            // Finish the current Activity
-                            finish();
-
-
-                        }
-
-                        /*
-                        // Update the user data to the Shared Preferences
-                        mSysPrefs.setUserId(user.getUserId());
-                        mSysPrefs.setFirstName(user.getFirstName());
-                        mSysPrefs.setLastName(user.getLastName());
-                        mSysPrefs.setEmail(user.getEmail());
-                        mSysPrefs.setPhone(user.getPhone());
-                        mSysPrefs.setType(user.getType());
-
-                        dialog.hide();
-
-                        if(mSysPrefs.getType().equals("LABOUR")) {
-                            // Create intent for moving to new Activity and Start the next Activity
-                            startActivity(new Intent(LoginActivity.this, LabourMainActivity.class));
-                            // Finish the current Activity
-                            finish();
-                        }
-                        else {
-                            // Create intent for moving to new Activity and Start the next Activity
-                            startActivity(new Intent(LoginActivity.this, ManagerMainActivity.class));
-                            // Finish the current Activity
-                            finish();
-                        }
-                        */
-
-                    }
-                    else {
-
-                        dialog.hide();
-
-                        Toast.makeText(RegisterActivity.this, "LABOUR ALREADY EXIST, PLEASE TRY ANOTHER EMAIL", Toast.LENGTH_SHORT).show();
-                        password.setText("");
-                        return;
-
-                    }
-
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+            switch (code) {
+                case SUCCESS:
+                    registerParsing(result);
+                    break;
+                case EXCEPTION:
+                    Toast.makeText(mContext, "There was some error. Please try again..", Toast.LENGTH_LONG).show();
+                    break;
+                case EMPTY:
+                    Toast.makeText(mContext, "No Result Found", Toast.LENGTH_LONG).show();
+                    break;
+                case CONNECTION_ERROR:
+                    Toast.makeText(mContext, "There is an issue while connecting to the server.\nPlease try after sometime",
+                            Toast.LENGTH_LONG).show();
+                    break;
+                case NO_CONNECTIVITY:
+                    Toast.makeText(mContext, "Internet Connection was not found.", Toast.LENGTH_LONG).show();
+                    break;
+                case CONNECTION_TIMEOUT_ERROR:
+                    Toast.makeText(mContext, "It took too long to get the response from server. Please try again..", Toast.LENGTH_LONG)
+                            .show();
+                    break;
             }
 
+
         }
+
     }
 
 }

@@ -1,5 +1,6 @@
 package com.jeevani.productionmanagementsystem;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -14,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.jeevani.productionmanagementsystem.bean.User;
+import com.jeevani.productionmanagementsystem.database.DBHandler;
 import com.sa90.materialarcmenu.ArcMenu;
 import com.sa90.materialarcmenu.StateChangeListener;
 
@@ -25,10 +28,23 @@ public class LabourMainActivity extends AppCompatActivity {
     //private DrawerLayout mDrawerLayout;
     ArcMenu arcMenuAndroid;
 
+    User user = new User();
+    Bundle userBundle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.labour_activity_main);
+
+        // Fetch the user details from the userBundle
+        user.setUserId(userBundle.getString("userId"));
+        user.setFirstName(userBundle.getString("firstName"));
+        user.setLastName(userBundle.getString("lastName"));
+        user.setEmail(userBundle.getString("email"));
+        user.setPhone(userBundle.getString("phone"));
+        user.setPassword(userBundle.getString("password"));
+        user.setType(userBundle.getString("type"));
+        user.setRemember(userBundle.getString("remember"));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -164,7 +180,13 @@ public class LabourMainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.logout) {
-            return true;
+            new DBHandler(LabourMainActivity.this, null, null, 1).deleteUser(Integer.parseInt(user.getUserId()));
+            // Create intent for movinf to new Activity
+            Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+            // Start the next Activity
+            startActivity(loginIntent);
+            // Finish the current Activity
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
