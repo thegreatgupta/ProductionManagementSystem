@@ -104,8 +104,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
                     param = "email=" + userEmail;
 
-                    //URL2 = URL1 + "?email="+ URLEncoder.encode(userEmail, "utf-8") +"&password="+URLEncoder.encode(userPassword, "utf-8");
-
                     // Request server for login Validation and get the user details
                     new ForgetPasswordDown().execute();
 
