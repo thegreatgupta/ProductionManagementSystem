@@ -36,6 +36,10 @@ public class LabourMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.labour_activity_main);
 
+        // Receive the user detail bundle from the login Page or Cover Page.
+        Intent receive = getIntent();
+        userBundle = receive.getExtras();
+
         // Fetch the user details from the userBundle
         user.setUserId(userBundle.getString("userId"));
         user.setFirstName(userBundle.getString("firstName"));
