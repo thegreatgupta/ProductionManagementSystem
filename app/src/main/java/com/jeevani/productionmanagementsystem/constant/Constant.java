@@ -6,7 +6,7 @@ package com.jeevani.productionmanagementsystem.constant;
 public class Constant {
 
     public static final String IP_ADDRESS = "" +
-            "http://192.168.0.6:8080/"+
+            "http://192.168.0.5:8080/"+
             //"http://localhost:8088/"+
             "PMS/api/";
             //"http://192.168.0.109:8080/" +
