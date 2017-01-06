@@ -18,7 +18,7 @@ public class NetConnectionDetector {
 	NetConnectionDetector(Context context) {
 		this.context = context;
 	}
-	
+	// Testing
 
 	public boolean isConntectingToInternet() {
 		ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
